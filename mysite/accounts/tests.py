@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 
 # Create your tests here.
 class AccountTestCase(TestCase):
+
+    @staticmethod
+    def print_info(message):
+        print(f"{message}")
+
     def setUp(self) -> None:
         self.print_info('Start setUp')
         self.user = User.objects.create_user(username='username', password='password')
@@ -14,8 +19,8 @@ class AccountTestCase(TestCase):
     def test_user_creation(self):
         # Проверка создания объекта User
         self.print_info('Start test_user_creation')
-        self.assertEqual(self.user.get_username, 'username')
-        self.assertEqual(self.user.password, 'password')
+        self.assertEqual(self.user.username, 'username')
+        self.assertTrue(self.user.check_password('password'))
         self.print_info('Finish test_movie_creation')
 
     
