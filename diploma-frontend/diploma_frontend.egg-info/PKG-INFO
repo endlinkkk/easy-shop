@@ -1,13 +1,9 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: diploma-frontend
 Version: 0.6
 Summary: Frontend for diploma project
-Home-page: UNKNOWN
 Author: Skillbox
-Author-email: UNKNOWN
 License: BSD-3-Clause  # Example license
-Description: UNKNOWN
-Platform: UNKNOWN
 Classifier: Environment :: Web Environment
 Classifier: Framework :: Django
 Classifier: Framework :: Django :: 3.2
