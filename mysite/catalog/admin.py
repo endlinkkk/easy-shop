@@ -82,41 +82,15 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ["title"]
 
     form = ProductAdminForm
-    
-    '''
-    def save_model(self, request, obj, form, change):
-        """Создает объект из загруженной фотки, но не прикрепляет его к продукту"""
-        super().save_model(request, obj, form, change)  # Сначала сохраняем объект Product
-        p = Product.objects.get(id=obj.id)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
         if form.cleaned_data["image_file"]:
             image = ProductImage.objects.create(src=form.cleaned_data["image_file"])
-            image.save()
-            print(f"Создали и сохранили кастомную картинку {image}")
-            p.images.add(image)  # Добавляем созданный объект ProductImage к полю "images" объекта Product
-            print(f'Добавили к продукту картинку {p}')
-        elif len(p.images.all()) == 0:
+            form.instance.images.add(image) 
+        elif len(form.instance.images.all()) == 0:
             default_image = ProductImage.objects.create()
-            default_image.save()
-            print(f"Создали и сохранили стандартную картинку {default_image}")
-            p.images.add(default_image)
-            print(f'Добавили к продукту картинку {p}')
-    '''
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)  # Сначала сохраняем объект Product
-        if form.cleaned_data["image_file"]:
-            print(form.cleaned_data["image_file"])
-            image = ProductImage.objects.create(src=form.cleaned_data["image_file"])
-            image.save()
-            print(f"Создали и сохранили кастомную картинку {image}")
-            obj.images.add(image)  # Добавляем созданный объект ProductImage к полю "images" объекта Product
-            print(f"Сохранили и добавили картинку, но картинка не привязана к продукту")
-        elif len(obj.images.all()) == 0:
-            default_image = ProductImage.objects.create()
-            default_image.save()
-            print(f"Создали и сохранили картинку {default_image}")
-            obj.images.add(default_image)
-            print(f'Добавили к продукту картинку {obj}')
-            print(f"Сохранили и добавили дефолтную картинку, но картинка не привязана к продукту")
+            form.instance.images.add(default_image)
 
             
 @admin.register(Tag)
