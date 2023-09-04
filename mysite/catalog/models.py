@@ -144,6 +144,9 @@ class Product(models.Model):
             if self.sale.dateFrom <= date.today() <= self.sale.dateTo:
                 return float(self.price) * (1 - self.sale.salePrice / 100)
         return self.price
+    
+    def __str__(self) -> str:
+        return f"{self.title}"
 
 
 

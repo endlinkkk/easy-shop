@@ -20,22 +20,15 @@ import json
 # Create your views here.
 class CategoriesView(APIView):
     def get(self, request):
-        print("Work CategoriesView")
         categories = Category.objects.all()
-        # print("cat", categories)
         serialized = CategorySerializer(categories, many=True)
-        # print(json.dumps(serialized.data, ensure_ascii=False))
         return Response(serialized.data)
 
 
 class ProductIdView(APIView):
     def get(self, request, id):
-        print("Work ProductIdView", id)
-        # data = json.loads(request.body)
         product = get_object_or_404(Product, pk=id)
-        print(product.images.all())
         serialized = ProductSerializer(product)
-        print(json.dumps(serialized.data, ensure_ascii=False))
         return Response(serialized.data)
 
 
@@ -43,7 +36,6 @@ class ProductIdReviewView(APIView):
     def post(self, request, id):
         product = get_object_or_404(Product, pk=id)
         data = request.data
-        print(data)
         review = Review.objects.create(
             author=data["author"],
             email=data["email"],
@@ -66,7 +58,6 @@ class TagView(APIView):
 
 class CatalogView(APIView):
     def get(self, request):
-        print("work catalog")
         d = {"inc": "-", "dec": ""}
         name = request.GET.get(
             "filter[name]"
@@ -115,7 +106,6 @@ class CatalogView(APIView):
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
             d['reviews'] = len(d['reviews'])
-        print(serialized.data)
         return Response(
             {"items": serialized.data, "current_page": current_page, "last_page": 10}
         )
@@ -139,7 +129,6 @@ class ProductLimitedView(APIView):
         #print(json.dumps(serialized.data, ensure_ascii=False))
         for d in serialized.data:
             d['reviews'] = len(d['reviews'])
-        print(serialized.data)
         return Response(serialized.data)
     
 

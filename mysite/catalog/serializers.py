@@ -79,7 +79,6 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        print(instance.get_price)
         data['price'] = str(instance.get_price)
         return data
 
