@@ -3,11 +3,6 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from datetime import date
 
-# TODO
-# исправить добавление картинки к товару
-# привести отображение моделей в админке в порядок
-# добавить роут catalog
-
 
 class Image(models.Model):
     """Модель для хранения картинки категории"""
@@ -116,8 +111,19 @@ class Specification(models.Model):
     value = models.CharField(max_length=100)
 
 
+class Sale(models.Model):
+    salePrice = models.IntegerField(null=False, verbose_name="Процент скидки %")
+    dateFrom = models.DateField(verbose_name="Начало скидки")
+    dateTo = models.DateField(verbose_name="Конец скидки")
+
+    def __str__(self) -> str:
+        return f"{self.salePrice} %"
+
+
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     count = models.IntegerField(null=False)
     date = models.CharField(max_length=100, default=date.today(), blank=True)
@@ -130,6 +136,15 @@ class Product(models.Model):
     reviews = models.ManyToManyField(Review, blank=True)
     specifications = models.ManyToManyField(Specification, blank=True)
     rating = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    sale = models.ForeignKey(Sale, null=True, blank=True, on_delete=models.SET_NULL)
+
+    @property
+    def get_price(self):
+        if self.sale:
+            if self.sale.dateFrom <= date.today() <= self.sale.dateTo:
+                return float(self.price) * (1 - self.sale.salePrice / 100)
+        return self.price
+
 
 
 '''

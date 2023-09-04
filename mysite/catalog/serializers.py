@@ -1,5 +1,15 @@
-from .models import Category, Subcategory, Image, Product, Tag, Review, Specification, ProductImage
+from .models import (
+    Category,
+    Subcategory,
+    Image,
+    Product,
+    Tag,
+    Review,
+    Specification,
+    ProductImage,
+)
 from rest_framework import serializers
+from datetime import datetime
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -9,9 +19,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = ["src", "alt"]
 
-
     def get_src(self, obj):
         return obj.src.url
+
 
 class ImageSerializer(serializers.ModelSerializer):
     # src = serializers.SerializerMethodField()
@@ -66,6 +76,14 @@ class ProductSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True)
     specifications = SpecificationSerializer(many=True)
 
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        print(instance.get_price)
+        data['price'] = str(instance.get_price)
+        return data
+
+
     class Meta:
         model = Product
         fields = [
@@ -83,4 +101,26 @@ class ProductSerializer(serializers.ModelSerializer):
             "reviews",
             "specifications",
             "rating",
+        ]
+
+
+
+class SaleSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        print(instance.get_price)
+        data['salePrice'] = str(instance.get_price)
+        data['dateFrom'] = str(datetime.strftime(instance.sale.dateFrom, "%d-%m"))
+        data['dateTo'] = str(datetime.strftime(instance.sale.dateTo, "%d-%m"))
+        return data
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "price",
+            "title",
+            "images",
         ]
