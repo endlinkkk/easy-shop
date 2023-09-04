@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Basket, BasketItem
+from .models import Basket, BasketItem, Order
 from catalog.serializers import ProductSerializer
 
 
@@ -22,4 +22,22 @@ class BasketSerializer(serializers.ModelSerializer):
         model = Basket
         fields = [
             'items'
+        ]
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = [
+            'id',
+            'createdAt',
+            'fullName',
+            'email',
+            'phone',
+            'deliveryType',
+            'paymentType',
+            'totalCost',
+            'status',
+            'city',
+            'address',
         ]
