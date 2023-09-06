@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, Avatar
 
 
 @admin.register(Profile)
@@ -9,5 +9,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ["fullName", "phone"]
     ordering = ["fullName", "balance"]
 
-
+@admin.register(Avatar)
+class AvatarAdmin(admin.ModelAdmin):
+    pass
 # Register your models here.

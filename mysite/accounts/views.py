@@ -40,7 +40,7 @@ class SignUpView(APIView):
         try:
             print("try")
             user = User.objects.create_user(username=username, password=password)
-            avatar = Avatar.objects.create()
+            avatar, created = Avatar.objects.get_or_create(src="avatars/default.png")
             profile = Profile.objects.create(user=user, fullName=name, avatar=avatar)
             user = authenticate(request, username=username, password=password)
             if user is not None:
