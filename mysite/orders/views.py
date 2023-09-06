@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Basket, BasketItem, Order, OrderItem
+from .models import Basket, BasketItem, Order
 from catalog.models import Product
 from accounts.models import Profile
 from .serializers import BasketSerializer, OrderSerializer
 from catalog.serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+import json
 
-# Create your views here.
+# Исправить отображение оплаты и типа доставки (сейчас не отображается)
 
 class BasketView(APIView):
     permission_classes = [IsAuthenticated]
@@ -77,67 +78,35 @@ class BasketView(APIView):
         return Response(data)
     
 
-    
-
 
 class OrderView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
-        order = Order.objects.get(user=request.user)
-        order_items = [order_item.product for order_item in OrderItem.objects.filter(order=order)]
-        order_serialized = OrderSerializer(order)
-        order_items_serialized = ProductSerializer(order_items, many=True)
-        order_serialized.data['products'] = order_items_serialized.data
-        print(order_serialized.data)
-        return Response(order_serialized.data)
-
+        order = Order.objects.filter(user=request.user)
+        result = OrderSerializer(order, many=True).data
+        return Response(result)
 
     def post(self, request):
         data = request.data
-        print(data)
-        profile = Profile.objects.get(user=request.user)
-        basket = Basket.objects.get(user=request.user)
-        basket_items = BasketItem.objects.filter(basket=basket)
-        total_cost = sum([basket_item.product.price for basket_item in basket_items])
-        order, created = Order.objects.get_or_create(user=request.user,
-                                                     fullName=profile.fullName,
-                                                     email=profile.email,
-                                                     phone=profile.phone,
-                                                     deliveryType="free",
-                                                     paymentType="online",
-                                                     totalCost=total_cost,
-                                                     status="accepted",
-                                                     city="Moscow",
-                                                     address="red square 1"
-                                                     )
+        products = []
         for product in data:
-            OrderItem.objects.create(order=order, product=Product.objects.get(id=product['id']), quantity=product['count'])
-        
+            products.append(product)
+        order = Order.objects.create(user=request.user, products=products)
         return Response({"orderId": order.id})
-
+    
 
 class OrderIdView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, id):
         order = Order.objects.get(id=id)
-        order_items = [order_item.product for order_item in OrderItem.objects.filter(order=order)]
-        order_serialized = OrderSerializer(order)
-        order_items_serialized = ProductSerializer(order_items, many=True)
-        order_serialized.data['products'] = order_items_serialized.data
-        print(order_serialized.data)
-        return Response(order_serialized.data)
-
+        result = OrderSerializer(order).data
+        print(result)
+        return Response(result)
+    
     def post(self, request, id):
-        print(f"order post id {request.data}")
-        data = request.data
-        order = Order.objects.get(id=data['orderId'])
-        order.deliveryType = data['deliveryType']
-        order.paymentType = data['paymentType']
-        order.status = data['status']
-        order.city = data['city']
-        order.address = data['address']
+        order = Order.objects.get(id=id)
+        order_data = request.data
+        for field in order_data:
+            order.field = order_data[field]
         order.save()
         return Response(status=200)
-
