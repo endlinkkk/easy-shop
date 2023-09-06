@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import Profile, Avatar
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, SignUpSerializer
 
 import json
 
@@ -33,23 +33,27 @@ class SignUpView(APIView):
     def post(self, request):
         user_data = json.loads(request.body)
         print(user_data)
+        serializer = SignUpSerializer(data=user_data)
         name = user_data.get("name")
         username = user_data.get("username")
         password = user_data.get("password")
+        if serializer.is_valid():
+            try:
+                print("try")
+                user = User.objects.create_user(username=username, password=password)
+                avatar, created = Avatar.objects.get_or_create(src="avatars/default.png")
+                profile = Profile.objects.create(user=user, fullName=name, avatar=avatar)
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
 
-        try:
-            print("try")
-            user = User.objects.create_user(username=username, password=password)
-            avatar, created = Avatar.objects.get_or_create(src="avatars/default.png")
-            profile = Profile.objects.create(user=user, fullName=name, avatar=avatar)
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-
-            return Response(status=status.HTTP_201_CREATED)
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response(status=status.HTTP_201_CREATED)
+            except Exception as e:
+                print(e)
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            print('поймали на ошибке')
+            return Response(serializer.errors, status=400)
 
 
 def signOut(request):
@@ -67,8 +71,6 @@ class ProfileView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        # profile = Profile.objects.get(user=request.user)
-        # serializer = ProfileSerializer(data=request.data)
         profile = Profile.objects.get(user=request.user)
         print(request.data)
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
