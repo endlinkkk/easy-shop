@@ -11,8 +11,9 @@ class PaymentView(APIView):
     def post(self, request, id):
         order = Order.objects.get(id=id)
         data = request.data
+        print(data)
         Payment.objects.create(order=order,
-                               number=data['number'],
+                               card_number=data['number'],
                                name=data['name'],
                                month=data['month'],
                                year=data['year'],

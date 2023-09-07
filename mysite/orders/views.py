@@ -109,4 +109,4 @@ class OrderIdView(APIView):
         for field in order_data:
             order.field = order_data[field]
         order.save()
-        return Response(status=200)
+        return Response({"orderId": order.id})
