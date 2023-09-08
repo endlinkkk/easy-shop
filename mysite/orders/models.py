@@ -48,8 +48,8 @@ class Order(models.Model):
     createdAt = models.DateField(verbose_name="Дата создания", default=timezone.now)
     fullName = models.CharField(max_length=100, null=True)
     email = models.EmailField(max_length=254, null=True)
-    phone = models.PositiveIntegerField(
-         blank=True, null=True, unique=True, verbose_name="Номер телефона"
+    phone = models.CharField(
+         blank=True, null=True, unique=True, verbose_name="Номер телефона", max_length=12
      )
     deliveryType = models.CharField(max_length=10, null=True)
     paymentType = models.CharField(max_length=20, null=True)

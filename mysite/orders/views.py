@@ -84,6 +84,7 @@ class OrderView(APIView):
     def get(self, request):
         order = Order.objects.filter(user=request.user)
         result = OrderSerializer(order, many=True).data
+        print(result)
         return Response(result)
 
     def post(self, request):
@@ -100,13 +101,13 @@ class OrderIdView(APIView):
     def get(self, request, id):
         order = Order.objects.get(id=id)
         result = OrderSerializer(order).data
-        print(result)
         return Response(result)
     
     def post(self, request, id):
         order = Order.objects.get(id=id)
         order_data = request.data
+        print(order_data)
         for field in order_data:
-            order.field = order_data[field]
+            setattr(order, field, order_data[field])
         order.save()
         return Response({"orderId": order.id})
