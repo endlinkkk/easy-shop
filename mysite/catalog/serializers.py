@@ -76,12 +76,10 @@ class ProductSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True)
     specifications = SpecificationSerializer(many=True)
 
-    
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['price'] = str(instance.get_price)
+        data["price"] = str(instance.get_price)
         return data
-
 
     class Meta:
         model = Product
@@ -103,16 +101,15 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class SaleSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         print(instance.get_price)
-        data['salePrice'] = str(instance.get_price)
-        data['dateFrom'] = str(datetime.strftime(instance.sale.dateFrom, "%d-%m"))
-        data['dateTo'] = str(datetime.strftime(instance.sale.dateTo, "%d-%m"))
+        data["salePrice"] = str(instance.get_price)
+        data["dateFrom"] = str(datetime.strftime(instance.sale.dateFrom, "%d-%m"))
+        data["dateTo"] = str(datetime.strftime(instance.sale.dateTo, "%d-%m"))
         return data
 
     class Meta:

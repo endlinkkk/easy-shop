@@ -8,7 +8,7 @@ from .views import (
     ProductPopularView,
     ProductLimitedView,
     BannerView,
-    SaleView
+    SaleView,
 )
 
 urlpatterns = [
@@ -20,5 +20,5 @@ urlpatterns = [
     path("tags", TagView.as_view(), name="tag"),
     path("catalog", CatalogView.as_view(), name="catalog"),
     path("banners", BannerView.as_view(), name="banners"),
-    path("sales", SaleView.as_view(), name="sales")
+    path("sales", SaleView.as_view(), name="sales"),
 ]

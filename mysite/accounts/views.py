@@ -41,8 +41,12 @@ class SignUpView(APIView):
             try:
                 print("try")
                 user = User.objects.create_user(username=username, password=password)
-                avatar, created = Avatar.objects.get_or_create(src="avatars/default.png")
-                profile = Profile.objects.create(user=user, fullName=name, avatar=avatar)
+                avatar, created = Avatar.objects.get_or_create(
+                    src="avatars/default.png"
+                )
+                profile = Profile.objects.create(
+                    user=user, fullName=name, avatar=avatar
+                )
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
@@ -52,7 +56,7 @@ class SignUpView(APIView):
                 print(e)
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            print('поймали на ошибке')
+            print("поймали на ошибке")
             return Response(serializer.errors, status=400)
 
 

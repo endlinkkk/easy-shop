@@ -6,36 +6,76 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0021_alter_product_date_alter_review_date'),
-        ('orders', '0004_remove_basket_product_remove_basket_quantity_and_more'),
+        ("catalog", "0021_alter_product_date_alter_review_date"),
+        ("orders", "0004_remove_basket_product_remove_basket_quantity_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('createdAt', models.DateField(default=django.utils.timezone.now, verbose_name='Дата создания')),
-                ('fullName', models.CharField(max_length=100)),
-                ('email', models.EmailField(max_length=254, null=True)),
-                ('phone', models.PositiveIntegerField(blank=True, null=True, unique=True, verbose_name='Номер телефона')),
-                ('deliveryType', models.BooleanField()),
-                ('paymentType', models.CharField(max_length=20)),
-                ('totalCost', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('status', models.CharField(max_length=50)),
-                ('city', models.CharField(max_length=50)),
-                ('address', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "createdAt",
+                    models.DateField(
+                        default=django.utils.timezone.now, verbose_name="Дата создания"
+                    ),
+                ),
+                ("fullName", models.CharField(max_length=100)),
+                ("email", models.EmailField(max_length=254, null=True)),
+                (
+                    "phone",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        null=True,
+                        unique=True,
+                        verbose_name="Номер телефона",
+                    ),
+                ),
+                ("deliveryType", models.BooleanField()),
+                ("paymentType", models.CharField(max_length=20)),
+                ("totalCost", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("status", models.CharField(max_length=50)),
+                ("city", models.CharField(max_length=50)),
+                ("address", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='OrderItem',
+            name="OrderItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField(default=1)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.order')),
-                ('product', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='catalog.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField(default=1)),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="orders.order"
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="catalog.product",
+                    ),
+                ),
             ],
         ),
     ]

@@ -5,25 +5,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0021_alter_product_date_alter_review_date'),
+        ("catalog", "0021_alter_product_date_alter_review_date"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='count',
+            model_name="product",
+            name="count",
             field=models.IntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='date',
-            field=models.CharField(blank=True, default=datetime.date(2023, 9, 6), max_length=100),
+            model_name="product",
+            name="date",
+            field=models.CharField(
+                blank=True, default=datetime.date(2023, 9, 6), max_length=100
+            ),
         ),
         migrations.AlterField(
-            model_name='review',
-            name='date',
-            field=models.CharField(blank=True, default=datetime.date(2023, 9, 6), max_length=100, null=True),
+            model_name="review",
+            name="date",
+            field=models.CharField(
+                blank=True, default=datetime.date(2023, 9, 6), max_length=100, null=True
+            ),
         ),
     ]

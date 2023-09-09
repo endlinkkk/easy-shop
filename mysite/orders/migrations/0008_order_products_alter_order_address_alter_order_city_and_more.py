@@ -6,59 +6,62 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('orders', '0007_order_user'),
+        ("orders", "0007_order_user"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='products',
+            model_name="order",
+            name="products",
             field=models.JSONField(default=list),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='address',
+            model_name="order",
+            name="address",
             field=models.CharField(max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='city',
+            model_name="order",
+            name="city",
             field=models.CharField(max_length=50, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='deliveryType',
+            model_name="order",
+            name="deliveryType",
             field=models.CharField(max_length=10, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='fullName',
+            model_name="order",
+            name="fullName",
             field=models.CharField(max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='paymentType',
+            model_name="order",
+            name="paymentType",
             field=models.CharField(max_length=20, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='status',
+            model_name="order",
+            name="status",
             field=models.CharField(max_length=50, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='totalCost',
+            model_name="order",
+            name="totalCost",
             field=models.DecimalField(decimal_places=2, max_digits=10, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="order",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.DeleteModel(
-            name='OrderItem',
+            name="OrderItem",
         ),
     ]

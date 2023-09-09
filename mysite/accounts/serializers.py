@@ -22,7 +22,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ["fullName", "email", "phone", "avatar"]
 
 
-
 class SignUpSerializer(serializers.Serializer):
     name = serializers.CharField()
     username = serializers.CharField()
@@ -30,16 +29,20 @@ class SignUpSerializer(serializers.Serializer):
 
     def validate_name(self, value):
         if len(value) < 2:
-            raise serializers.ValidationError('Name should be at least 3 characters long.')
+            raise serializers.ValidationError(
+                "Name should be at least 3 characters long."
+            )
         return value
 
     def validate_username(self, value):
         # Проверка на уникальность имени пользователя
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError('Username already exists.')
+            raise serializers.ValidationError("Username already exists.")
         return value
 
     def validate_password(self, value):
         if len(value) < 8:
-            raise serializers.ValidationError('Password should be at least 8 characters long.')
+            raise serializers.ValidationError(
+                "Password should be at least 8 characters long."
+            )
         return value

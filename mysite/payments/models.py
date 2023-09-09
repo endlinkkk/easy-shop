@@ -3,6 +3,7 @@ from orders.models import Order
 
 # Create your models here.
 
+
 class Payment(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100, null=True)

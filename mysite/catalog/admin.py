@@ -10,7 +10,7 @@ from .models import (
     Review,
     Specification,
     ProductImage,
-    Sale
+    Sale,
 )
 
 """
@@ -79,11 +79,9 @@ class SubcategoryAdmin(admin.ModelAdmin):
 
 class ProductAdminForm(forms.ModelForm):
     image_file = forms.ImageField(required=False)
-    
-    
 
-    #def price(self, obj):
-        #return obj.price
+    # def price(self, obj):
+    # return obj.price
 
     class Meta:
         model = Product
@@ -148,28 +146,18 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
-
     def product_price(self, obj):
         return self.price
-    
 
-    product_price.short_description = "Начальная цена продукта ($)" 
-    
-    
-    def add_view(self, request, form_url='', extra_context=None):
+    product_price.short_description = "Начальная цена продукта ($)"
+
+    def add_view(self, request, form_url="", extra_context=None):
         try:
-            product_id = int(request.META['HTTP_REFERER'].split('/')[-3])
+            product_id = int(request.META["HTTP_REFERER"].split("/")[-3])
             self.product = Product.objects.get(id=product_id)
             self.price = self.product.price
         finally:
             return super().add_view(request, form_url, extra_context)
 
-        
     list_display = ["salePrice", "dateFrom", "dateTo"]
-    readonly_fields = ['product_price']
-
-
-
-
-
-    
+    readonly_fields = ["product_price"]

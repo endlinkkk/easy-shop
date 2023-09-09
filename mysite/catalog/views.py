@@ -80,9 +80,9 @@ class CatalogView(APIView):
         sort = request.GET.get("sort")  # Получение значения параметра sort
         sort_type = request.GET.get("sortType")  # Получение значения параметра sortType
         limit = request.GET.get("limit")
-        #print(
-            #f"name: {name}\nmin_price: {min_price}\nmax_price: {max_price}\nfree_delivery: {free_delivery}\navailable: {available}\ncurrent_page: {current_page}\nsort: {sort}\nsort_type: {sort_type}\nlimit: {limit}"
-        #)
+        # print(
+        # f"name: {name}\nmin_price: {min_price}\nmax_price: {max_price}\nfree_delivery: {free_delivery}\navailable: {available}\ncurrent_page: {current_page}\nsort: {sort}\nsort_type: {sort_type}\nlimit: {limit}"
+        # )
         products = Product.objects.all().order_by(f"{d[sort_type]}{sort}")
 
         if available == "true":
@@ -105,47 +105,45 @@ class CatalogView(APIView):
 
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
-            d['reviews'] = len(d['reviews'])
+            d["reviews"] = len(d["reviews"])
         return Response(
             {"items": serialized.data, "current_page": current_page, "last_page": 10}
         )
-    
+
+
 class ProductPopularView(APIView):
     def get(self, request):
-        products = Product.objects.annotate(num_reviews=Count("reviews")).order_by('-num_reviews', '-rating')
+        products = Product.objects.annotate(num_reviews=Count("reviews")).order_by(
+            "-num_reviews", "-rating"
+        )
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
-            d['reviews'] = len(d['reviews'])
+            d["reviews"] = len(d["reviews"])
         return Response(serialized.data)
-    
+
 
 class ProductLimitedView(APIView):
     def get(self, request):
-        products = Product.objects.filter(
-            Q(count__gt=0),
-            Q(count__lt=4)
-        )
+        products = Product.objects.filter(Q(count__gt=0), Q(count__lt=4))
         serialized = ProductSerializer(products, many=True)
-        #print(json.dumps(serialized.data, ensure_ascii=False))
+        # print(json.dumps(serialized.data, ensure_ascii=False))
         for d in serialized.data:
-            d['reviews'] = len(d['reviews'])
+            d["reviews"] = len(d["reviews"])
         return Response(serialized.data)
-    
+
 
 class BannerView(APIView):
     def get(self, request):
         products = Product.objects.all()
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
-            d['reviews'] = len(d['reviews'])
+            d["reviews"] = len(d["reviews"])
         return Response(serialized.data)
-    
+
 
 class SaleView(APIView):
     def get(self, request):
-        current_page = request.GET.get(
-            "currentPage"
-        )
+        current_page = request.GET.get("currentPage")
         products = [product for product in Product.objects.all() if product.sale]
         serialized = SaleSerializer(products, many=True)
         return Response(

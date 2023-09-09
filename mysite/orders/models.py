@@ -4,14 +4,13 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
-
 class Basket(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
         return f"{self.user} - {self.id}"
 
-    
+
 class BasketItem(models.Model):
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
@@ -19,10 +18,9 @@ class BasketItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product} - {self.quantity}"
-    
 
 
-#-------------старый ордер
+# -------------старый ордер
 
 # class Order(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
@@ -52,8 +50,8 @@ class Order(models.Model):
     fullName = models.CharField(max_length=100, null=True)
     email = models.EmailField(max_length=254, null=True)
     phone = models.CharField(
-         blank=True, null=True, unique=True, verbose_name="Номер телефона", max_length=12
-     )
+        blank=True, null=True, unique=True, verbose_name="Номер телефона", max_length=12
+    )
     deliveryType = models.CharField(max_length=10, null=True)
     paymentType = models.CharField(max_length=20, null=True)
     totalCost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
