@@ -10,7 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import json
 
-# Исправить отображение оплаты и типа доставки (сейчас не отображается)
 
 
 class BasketView(APIView):
