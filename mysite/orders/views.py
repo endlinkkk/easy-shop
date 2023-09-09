@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Basket, BasketItem, Order
 from catalog.models import Product
 from accounts.models import Profile
-from .serializers import BasketSerializer, OrderSerializer
+from .serializers import BasketSerializer, OrderSerializer, OrderIdSerializer
 from catalog.serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -24,6 +24,7 @@ class BasketView(APIView):
             d['count'] = quantitys[i]
             d['reviews'] = len(d['reviews'])
         return serialized.data
+    
 
     def get(self, request):
         try:
@@ -42,18 +43,28 @@ class BasketView(APIView):
         basket, created = Basket.objects.get_or_create(user=request.user)
         if created:
             print("Создали корзину")
-            basket_item = BasketItem.objects.create(basket=basket, product=product, quantity=data['count'])
+            if (product.count - data['count']) >= 0:
+                basket_item = BasketItem.objects.create(basket=basket, product=product, quantity=data['count'])
+            else:
+                return Response(status=400)
         else:
             basket_item, created = BasketItem.objects.get_or_create(basket=basket, product=product)
             if created:
                 print('создали айтем')
                 basket_item.product = product
                 basket_item.quantity = data['count']
-                basket_item.save()
+                if (product.count - basket_item.quantity) >= 0:
+                    basket_item.save()
+                else:
+                    return Response(status=400)
             else:
                 print('добавили к айтему')
                 basket_item.quantity += data['count']
-                basket_item.save()
+                print(basket_item.quantity)
+                if (product.count - basket_item.quantity) >= 0:
+                    basket_item.save()
+                else:
+                    return Response(status=400)
 
         basket_item = BasketItem.objects.filter(basket=basket)
         data = BasketView.get_products(basket_item)
@@ -98,6 +109,14 @@ class OrderView(APIView):
 
 class OrderIdView(APIView):
     permission_classes = [IsAuthenticated]
+
+    def get_totalCost(self, products):
+        totalCost = 0
+        for product in products:
+            totalCost += float(product['price']) * int(product['count']) 
+        return totalCost
+
+
     def get(self, request, id):
         order = Order.objects.get(id=id)
         result = OrderSerializer(order).data
@@ -106,8 +125,14 @@ class OrderIdView(APIView):
     def post(self, request, id):
         order = Order.objects.get(id=id)
         order_data = request.data
+        serializer = OrderIdSerializer(data=order_data)
         print(order_data)
-        for field in order_data:
-            setattr(order, field, order_data[field])
-        order.save()
-        return Response({"orderId": order.id})
+        if serializer.is_valid():
+            for field in order_data:
+                setattr(order, field, order_data[field])
+            order.status = 'accepted'
+            order.totalCost = self.get_totalCost(order_data['products'])
+            order.save()
+            return Response({"orderId": order.id})
+        else:
+            return Response(serializer.errors, status=400)

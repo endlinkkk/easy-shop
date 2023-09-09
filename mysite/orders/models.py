@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 class Basket(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
+    def __str__(self) -> str:
+        return f"{self.user} - {self.id}"
+
     
 class BasketItem(models.Model):
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
@@ -58,3 +61,6 @@ class Order(models.Model):
     city = models.CharField(max_length=50, null=True)
     address = models.CharField(max_length=100, null=True)
     products = models.JSONField(default=list)
+
+    def __str__(self) -> str:
+        return f"{self.id} - {self.createdAt} - {self.status}"
