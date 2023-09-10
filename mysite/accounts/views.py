@@ -32,14 +32,12 @@ class SignInView(APIView):
 class SignUpView(APIView):
     def post(self, request):
         user_data = json.loads(request.body)
-        print(user_data)
         serializer = SignUpSerializer(data=user_data)
         name = user_data.get("name")
         username = user_data.get("username")
         password = user_data.get("password")
         if serializer.is_valid():
             try:
-                print("try")
                 user = User.objects.create_user(username=username, password=password)
                 avatar, created = Avatar.objects.get_or_create(
                     src="avatars/default.png"
@@ -53,10 +51,8 @@ class SignUpView(APIView):
 
                 return Response(status=status.HTTP_201_CREATED)
             except Exception as e:
-                print(e)
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            print("поймали на ошибке")
             return Response(serializer.errors, status=400)
 
 
@@ -71,18 +67,14 @@ class ProfileView(APIView):
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile)
-        print(serializer.data)
         return Response(serializer.data)
 
     def post(self, request):
         profile = Profile.objects.get(user=request.user)
-        print(request.data)
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data)
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -92,7 +84,6 @@ class PasswordView(APIView):
     def post(self, request: Request):
         user = User.objects.get(username=request.user)
         user.set_password(request.data["newPassword"])
-        print(request.data)
         user.save()
         return Response(status=status.HTTP_200_OK)
 

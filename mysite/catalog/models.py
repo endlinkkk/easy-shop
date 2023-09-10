@@ -147,28 +147,3 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title}"
-
-
-'''
-@receiver(post_save, sender=Product)
-def set_default_product_image(sender, instance, **kwargs):
-    """Обрабатывает запрос для продукта после сохранени в БД"""
-    """Сейчас просто создает стандартную фотку, НО не прикрепляет ее к продукту"""
-    if not instance.images.exists():
-        default_image = ProductImage.objects.create()
-        default_image.save()
-        instance.images.add(default_image)
-        instance.save()
-'''
-
-'''
-@receiver(post_save, sender=Product)
-def set_default_product_image(sender, instance, **kwargs):
-    """Обрабатывает запрос для продукта после сохранени в БД"""
-    """Сейчас просто создает стандартную фотку, НО не прикрепляет ее к продукту"""
-    if len(instance.images.all()) == 0:
-        print('work post_save')
-        default_image = ProductImage.objects.create()
-        default_image.save()
-        instance.images.add(default_image)
-'''

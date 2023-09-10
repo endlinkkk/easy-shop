@@ -19,7 +19,6 @@ class AccountTestCase(TestCase):
         self.print_info("Finish setUp")
 
     def test_user_creation(self):
-        # Проверка создания объекта User
         self.print_info("Start test_user_creation")
         self.assertEqual(self.user.username, "username")
         self.assertTrue(self.user.check_password("password"))

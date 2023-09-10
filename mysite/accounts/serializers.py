@@ -35,7 +35,6 @@ class SignUpSerializer(serializers.Serializer):
         return value
 
     def validate_username(self, value):
-        # Проверка на уникальность имени пользователя
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username already exists.")
         return value

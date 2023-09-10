@@ -14,7 +14,6 @@ class PaymentView(APIView):
     def change_the_count_of_products(self, order):
         for item in order.products:
             product = Product.objects.get(id=item["id"])
-            print(product)
             product.count -= item["count"]
             product.save()
 
@@ -38,5 +37,4 @@ class PaymentView(APIView):
             self.change_the_count_of_products(order)
             return Response(status=200)
         else:
-            print(serializer.errors)
             return Response(serializer.errors, status=400)

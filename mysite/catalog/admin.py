@@ -13,24 +13,6 @@ from .models import (
     Sale,
 )
 
-"""
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-
-    list_display = ['title', 'image']
-    list_filter = ['title']
-    search_fields = ['title']
-    ordering = ['title']
-
-
-@admin.register(Subcategory)
-class SubcategoryAdmin(admin.ModelAdmin):
-    list_display = ['title', 'image']
-    list_filter = ['title']
-    search_fields = ['title']
-    ordering = ['title']
-"""
-
 
 class CategoryAdminForm(forms.ModelForm):
     image_file = forms.ImageField(required=False)
@@ -79,9 +61,6 @@ class SubcategoryAdmin(admin.ModelAdmin):
 
 class ProductAdminForm(forms.ModelForm):
     image_file = forms.ImageField(required=False)
-
-    # def price(self, obj):
-    # return obj.price
 
     class Meta:
         model = Product

@@ -19,25 +19,6 @@ class BasketSerializer(serializers.ModelSerializer):
         fields = ["items"]
 
 
-# class OrderSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Order
-#         fields = [
-#             'id',
-#             'createdAt',
-#             'fullName',
-#             'email',
-#             'phone',
-#             'deliveryType',
-#             'paymentType',
-#             'totalCost',
-#             'status',
-#             'city',
-#             'address',
-#         ]
-
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order

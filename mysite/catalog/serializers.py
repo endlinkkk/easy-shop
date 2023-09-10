@@ -24,14 +24,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    # src = serializers.SerializerMethodField()
-
     class Meta:
         model = Image
         fields = ["src", "alt"]
-
-    # def get_src(self, obj):
-    # return obj.src.url
 
 
 class SubcategoriesSerializer(serializers.ModelSerializer):
@@ -106,7 +101,6 @@ class SaleSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        print(instance.get_price)
         data["salePrice"] = str(instance.get_price)
         data["dateFrom"] = str(datetime.strftime(instance.sale.dateFrom, "%d-%m"))
         data["dateTo"] = str(datetime.strftime(instance.sale.dateTo, "%d-%m"))

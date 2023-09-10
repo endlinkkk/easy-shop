@@ -59,26 +59,14 @@ class TagView(APIView):
 class CatalogView(APIView):
     def get(self, request):
         d = {"inc": "-", "dec": ""}
-        name = request.GET.get(
-            "filter[name]"
-        )  # Получение значения параметра filter[name]
-        min_price = request.GET.get(
-            "filter[minPrice]"
-        )  # Получение значения параметра filter[minPrice]
-        max_price = request.GET.get(
-            "filter[maxPrice]"
-        )  # Получение значения параметра filter[maxPrice]
-        free_delivery = request.GET.get(
-            "filter[freeDelivery]"
-        )  # Получение значения параметра filter[freeDelivery]
-        available = request.GET.get(
-            "filter[available]"
-        )  # Получение значения параметра filter[available]
-        current_page = request.GET.get(
-            "currentPage"
-        )  # Получение значения параметра currentPage
-        sort = request.GET.get("sort")  # Получение значения параметра sort
-        sort_type = request.GET.get("sortType")  # Получение значения параметра sortType
+        name = request.GET.get("filter[name]")
+        min_price = request.GET.get("filter[minPrice]")
+        max_price = request.GET.get("filter[maxPrice]")
+        free_delivery = request.GET.get("filter[freeDelivery]")
+        available = request.GET.get("filter[available]")
+        current_page = request.GET.get("currentPage")
+        sort = request.GET.get("sort")
+        sort_type = request.GET.get("sortType")
         limit = request.GET.get("limit")
         # print(
         # f"name: {name}\nmin_price: {min_price}\nmax_price: {max_price}\nfree_delivery: {free_delivery}\navailable: {available}\ncurrent_page: {current_page}\nsort: {sort}\nsort_type: {sort_type}\nlimit: {limit}"
@@ -126,7 +114,6 @@ class ProductLimitedView(APIView):
     def get(self, request):
         products = Product.objects.filter(Q(count__gt=0), Q(count__lt=4))
         serialized = ProductSerializer(products, many=True)
-        # print(json.dumps(serialized.data, ensure_ascii=False))
         for d in serialized.data:
             d["reviews"] = len(d["reviews"])
         return Response(serialized.data)

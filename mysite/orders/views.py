@@ -11,7 +11,6 @@ from rest_framework import status
 import json
 
 
-
 class BasketView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -36,11 +35,9 @@ class BasketView(APIView):
 
     def post(self, request):
         data = request.data
-        print(data)
         product = Product.objects.get(id=data["id"])
         basket, created = Basket.objects.get_or_create(user=request.user)
         if created:
-            print("Создали корзину")
             if (product.count - data["count"]) >= 0:
                 basket_item = BasketItem.objects.create(
                     basket=basket, product=product, quantity=data["count"]
@@ -52,7 +49,6 @@ class BasketView(APIView):
                 basket=basket, product=product
             )
             if created:
-                print("создали айтем")
                 basket_item.product = product
                 basket_item.quantity = data["count"]
                 if (product.count - basket_item.quantity) >= 0:
@@ -60,9 +56,7 @@ class BasketView(APIView):
                 else:
                     return Response(status=400)
             else:
-                print("добавили к айтему")
                 basket_item.quantity += data["count"]
-                print(basket_item.quantity)
                 if (product.count - basket_item.quantity) >= 0:
                     basket_item.save()
                 else:
@@ -74,12 +68,9 @@ class BasketView(APIView):
 
     def delete(self, request):
         data = request.data
-        print(data)
         basket = Basket.objects.get(user=request.user)
         product = Product.objects.get(id=data["id"])
-        print(product)
         basket_item = BasketItem.objects.get(basket=basket, product=product)
-        print(basket_item)
         basket_item.quantity -= data["count"]
         basket_item.save()
         if basket_item.quantity <= 0:
@@ -127,7 +118,6 @@ class OrderIdView(APIView):
         order = Order.objects.get(id=id)
         order_data = request.data
         serializer = OrderIdSerializer(data=order_data)
-        print(order_data)
         if serializer.is_valid():
             for field in order_data:
                 setattr(order, field, order_data[field])
