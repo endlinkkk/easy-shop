@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import Category, Product, Review, Tag
@@ -8,6 +9,7 @@ from .serializers import (
     TagSerializer,
     SaleSerializer,
 )
+from .filters import products_filter
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -19,21 +21,21 @@ import json
 
 # Create your views here.
 class CategoriesView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         categories = Category.objects.all()
         serialized = CategorySerializer(categories, many=True)
         return Response(serialized.data)
 
 
 class ProductIdView(APIView):
-    def get(self, request, id):
+    def get(self, request: HttpRequest, id):
         product = get_object_or_404(Product, pk=id)
         serialized = ProductSerializer(product)
         return Response(serialized.data)
 
 
 class ProductIdReviewView(APIView):
-    def post(self, request, id):
+    def post(self, request: HttpRequest, id):
         product = get_object_or_404(Product, pk=id)
         data = request.data
         review = Review.objects.create(
@@ -50,47 +52,16 @@ class ProductIdReviewView(APIView):
 
 
 class TagView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         tag = Tag.objects.all()
         serialized = TagSerializer(tag, many=True)
         return Response(serialized.data)
 
 
 class CatalogView(APIView):
-    def get(self, request):
-        d = {"inc": "-", "dec": ""}
-        name = request.GET.get("filter[name]")
-        min_price = request.GET.get("filter[minPrice]")
-        max_price = request.GET.get("filter[maxPrice]")
-        free_delivery = request.GET.get("filter[freeDelivery]")
-        available = request.GET.get("filter[available]")
+    def get(self, request: HttpRequest):
         current_page = request.GET.get("currentPage")
-        sort = request.GET.get("sort")
-        sort_type = request.GET.get("sortType")
-        limit = request.GET.get("limit")
-        # print(
-        # f"name: {name}\nmin_price: {min_price}\nmax_price: {max_price}\nfree_delivery: {free_delivery}\navailable: {available}\ncurrent_page: {current_page}\nsort: {sort}\nsort_type: {sort_type}\nlimit: {limit}"
-        # )
-        products = Product.objects.all().order_by(f"{d[sort_type]}{sort}")
-
-        if available == "true":
-            avail_filter = Q(count__gt=0)
-        elif available == "false":
-            avail_filter = Q(count__lte=0)
-
-        if name:
-            name_filter = Q(title__icontains=name)
-        else:
-            name_filter = Q()
-
-        products = products.filter(
-            Q(price__gte=min_price),
-            Q(price__lte=max_price),
-            Q(freeDelivery=strtobool(free_delivery)),
-            avail_filter,
-            name_filter,
-        )
-
+        products = products_filter(request)
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
             d["reviews"] = len(d["reviews"])
@@ -100,7 +71,7 @@ class CatalogView(APIView):
 
 
 class ProductPopularView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         products = Product.objects.annotate(num_reviews=Count("reviews")).order_by(
             "-num_reviews", "-rating"
         )
@@ -111,7 +82,7 @@ class ProductPopularView(APIView):
 
 
 class ProductLimitedView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         products = Product.objects.filter(Q(count__gt=0), Q(count__lt=4))
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
@@ -120,7 +91,7 @@ class ProductLimitedView(APIView):
 
 
 class BannerView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         products = Product.objects.all()
         serialized = ProductSerializer(products, many=True)
         for d in serialized.data:
@@ -129,7 +100,7 @@ class BannerView(APIView):
 
 
 class SaleView(APIView):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         current_page = request.GET.get("currentPage")
         products = [product for product in Product.objects.all() if product.sale]
         serialized = SaleSerializer(products, many=True)
