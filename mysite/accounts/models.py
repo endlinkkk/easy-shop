@@ -39,3 +39,8 @@ class Profile(models.Model):
         related_name="profile",
         verbose_name="Аватар",
     )
+
+
+    class Meta:
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профили"

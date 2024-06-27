@@ -38,3 +38,7 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id} - {self.createdAt} - {self.status}"
+    
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"

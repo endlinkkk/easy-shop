@@ -11,3 +11,7 @@ class Payment(models.Model):
     month = models.IntegerField(null=True)
     year = models.IntegerField(null=True)
     code = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплата"
