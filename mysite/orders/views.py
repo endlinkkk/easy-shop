@@ -1,10 +1,13 @@
+from django.http import HttpRequest
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Basket, BasketItem, Order
+
+from cart.cart import Cart
+from .models import Order
 from catalog.models import Product
 from accounts.models import Profile
-from .serializers import BasketSerializer, OrderSerializer, OrderIdSerializer
+from .serializers import OrderSerializer, OrderIdSerializer
 from catalog.serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -14,84 +17,43 @@ import json
 class BasketView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @staticmethod
-    def get_products(basket_items) -> list:
-        products = [item.product for item in basket_items]
-        quantitys = [item.quantity for item in basket_items]
-        serialized = ProductSerializer(products, many=True)
-        for i, d in enumerate(serialized.data):
-            d["count"] = quantitys[i]
-            d["reviews"] = len(d["reviews"])
-        return serialized.data
-
-    def get(self, request):
+    def get(self, request: HttpRequest) -> Response:
         try:
-            basket = Basket.objects.get(user=request.user)
-            basket_item = BasketItem.objects.filter(basket=basket)
-            data = BasketView.get_products(basket_item)
-            return Response(data)
-        except Basket.DoesNotExist:
+            cart = Cart(request)
+            serialized = cart.get_products()
+            return Response(serialized.data)
+        except:
             return Response([])
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         data = request.data
         product = Product.objects.get(id=data["id"])
-        basket, created = Basket.objects.get_or_create(user=request.user)
-        if created:
-            if (product.count - data["count"]) >= 0:
-                basket_item = BasketItem.objects.create(
-                    basket=basket, product=product, quantity=data["count"]
-                )
-            else:
-                return Response(status=400)
-        else:
-            basket_item, created = BasketItem.objects.get_or_create(
-                basket=basket, product=product
-            )
-            if created:
-                basket_item.product = product
-                basket_item.quantity = data["count"]
-                if (product.count - basket_item.quantity) >= 0:
-                    basket_item.save()
-                else:
-                    return Response(status=400)
-            else:
-                basket_item.quantity += data["count"]
-                if (product.count - basket_item.quantity) >= 0:
-                    basket_item.save()
-                else:
-                    return Response(status=400)
+        cart = Cart(request)
+        if (product.count - data["count"]) < 0:
+            return Response(status=400)
+        cart.add(product, quantity=data["count"])
+        serialized = cart.get_products()
 
-        basket_item = BasketItem.objects.filter(basket=basket)
-        data = BasketView.get_products(basket_item)
-        return Response(data)
+        return Response(serialized.data)
 
-    def delete(self, request):
+    def delete(self, request: HttpRequest) -> Response:
         data = request.data
-        basket = Basket.objects.get(user=request.user)
+        cart = Cart(request)
         product = Product.objects.get(id=data["id"])
-        basket_item = BasketItem.objects.get(basket=basket, product=product)
-        basket_item.quantity -= data["count"]
-        basket_item.save()
-        if basket_item.quantity <= 0:
-            print("должно удалить")
-            basket_item.delete()
-
-        basket_item = BasketItem.objects.filter(basket=basket)
-        data = BasketView.get_products(basket_item)
-        return Response(data)
+        cart.remove(product, data["count"])
+        serialized = cart.get_products()
+        return Response(serialized.data)
 
 
 class OrderView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> Response:
         order = Order.objects.filter(user=request.user)
         result = OrderSerializer(order, many=True).data
-        print(result)
         return Response(result)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         data = request.data
         products = []
         for product in data:
@@ -103,18 +65,18 @@ class OrderView(APIView):
 class OrderIdView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_totalCost(self, products):
+    def get_totalCost(self, products: list[dict]) -> float:
         totalCost = 0
         for product in products:
             totalCost += float(product["price"]) * int(product["count"])
         return totalCost
 
-    def get(self, request, id):
+    def get(self, request: HttpRequest, id: str) -> Response:
         order = Order.objects.get(id=id)
         result = OrderSerializer(order).data
         return Response(result)
 
-    def post(self, request, id):
+    def post(self, request: HttpRequest, id: str) -> Response:
         order = Order.objects.get(id=id)
         order_data = request.data
         serializer = OrderIdSerializer(data=order_data)

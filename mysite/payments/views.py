@@ -1,23 +1,22 @@
+from django.http import HttpRequest
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from cart.cart import Cart
 from orders.models import Order
 from catalog.models import Product
 from .models import Payment
 from .serializers import PaymentSerializer
-from orders.models import Basket
-
-# Create your views here.
 
 
 class PaymentView(APIView):
-    def change_the_count_of_products(self, order):
+    def change_the_count_of_products(self, order: Order):
         for item in order.products:
             product = Product.objects.get(id=item["id"])
             product.count -= item["count"]
             product.save()
 
-    def post(self, request, id):
+    def post(self, request: HttpRequest, id: str) -> Response:
         order = Order.objects.get(id=id)
         data = request.data
         serializer = PaymentSerializer(data=data)
@@ -30,8 +29,8 @@ class PaymentView(APIView):
                 year=data["year"],
                 code=data["code"],
             )
-            basket = Basket.objects.get(user=request.user)
-            basket.delete()
+            cart = Cart(request)
+            cart.clear()
             order.status = "paid"
             order.save()
             self.change_the_count_of_products(order)

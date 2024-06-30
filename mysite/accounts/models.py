@@ -1,11 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-
 
 class Avatar(models.Model):
-    """Модель для хранения аватара пользователя"""
 
     src = models.ImageField(
         upload_to="avatars/user_avatars/",
@@ -22,7 +19,6 @@ class Avatar(models.Model):
 
 
 class Profile(models.Model):
-    """Модель профиля пользователя"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     fullName = models.CharField(max_length=128, verbose_name="Полное имя")
@@ -39,3 +35,7 @@ class Profile(models.Model):
         related_name="profile",
         verbose_name="Аватар",
     )
+
+    class Meta:
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профили"

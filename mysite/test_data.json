@@ -1,0 +1,77 @@
+[
+    {
+      "model": "accounts.avatar",
+      "pk": 1,
+      "fields": {
+        "src": "avatars/user_avatars/test_avatar.png",
+        "alt": "Тестовый аватар"
+      }
+    },
+    {
+      "model": "auth.user",
+      "pk": 1,
+      "fields": {
+        "username": "testuser",
+        "password": "pbkdf2_sha256$21600$gQqNBcnWwOqH$Xx9f9iVZjBbKtDpL+GhMvzJlCnF8eEaUdRcT5YsN6rP3yA3I6o=",
+        "email": "test@example.com",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "last_login": "2024-06-27T00:00:00Z",
+        "date_joined": "2024-06-27T00:00:00Z"
+      }
+    },
+    {
+      "model": "accounts.profile",
+      "pk": 1,
+      "fields": {
+        "user": 1,
+        "fullName": "Тестовый пользователь",
+        "phone": "1234567890",
+        "email": "test@example.com",
+        "balance": "1000.00",
+        "avatar": 1
+      }
+    },
+    {
+      "model": "catalog.category",
+      "pk": 1,
+      "fields": {
+        "title": "Тестовая категория"
+      }
+    },
+    {
+        "model": "catalog.subimage",
+        "pk": 1,
+        "fields": {
+          "src": "subcategory/pictures/test_subcategory_image.png",
+          "alt": "Тестовое изображение подкатегории"
+        }
+      },
+    {
+      "model": "catalog.subcategory",
+      "pk": 1,
+      "fields": {
+        "title": "Тестовая подкатегория",
+        "image": 1
+      }
+    },
+    {
+      "model": "catalog.product",
+      "pk": 1,
+      "fields": {
+        "category": 1,
+        "price": "99.99",
+        "count": 10,
+        "date": "2024-06-27",
+        "title": "Тестовый продукт",
+        "description": "Описание тестового продукта",
+        "fullDescription": "Полное описание тестового продукта",
+        "freeDelivery": true,
+        "rating": "4.50"
+      }
+    }
+  ]
+  

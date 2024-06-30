@@ -5,7 +5,6 @@ from datetime import date
 
 
 class Image(models.Model):
-    """Модель для хранения картинки категории"""
 
     src = models.ImageField(
         upload_to="category/pictures/",
@@ -25,7 +24,6 @@ class Image(models.Model):
 
 
 class SubImage(models.Model):
-    """Модель для хранения картинки подкатегории"""
 
     src = models.ImageField(
         upload_to="subcategory/pictures/",
@@ -39,9 +37,12 @@ class SubImage(models.Model):
     def __str__(self):
         return self.src.name
 
+    class Meta:
+        verbose_name = "Изображение подкатегории"
+        verbose_name_plural = "Изображения подкатегории"
+
 
 class Subcategory(models.Model):
-    """Модель подкатегории"""
 
     title = models.CharField(max_length=100)
     image = models.ForeignKey(SubImage, on_delete=models.CASCADE, blank=True, null=True)
@@ -49,9 +50,12 @@ class Subcategory(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Подкатегория"
+        verbose_name_plural = "Подкатегории"
+
 
 class Category(models.Model):
-    """Модель категории"""
 
     title = models.CharField(max_length=100)
     image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
@@ -62,17 +66,19 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
 
 @receiver(pre_save, sender=Category)
 def set_default_image(sender, instance, **kwargs):
-    """Обрабатывает запрос для категории перед сохранением в БД"""
     if not instance.image:
         instance.image = Image.objects.create()
 
 
 @receiver(pre_save, sender=Subcategory)
 def set_default_category_subimage(sender, instance, **kwargs):
-    """Обрабатывает запрос для подкатегории перед сохранением в БД"""
     if not instance.image:
         instance.image = SubImage.objects.create()
 
@@ -90,12 +96,20 @@ class ProductImage(models.Model):
     def __str__(self):
         return self.src.name
 
+    class Meta:
+        verbose_name = "Изображение продукта"
+        verbose_name_plural = "Изображения продукта"
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
 
 
 class Review(models.Model):
@@ -105,10 +119,18 @@ class Review(models.Model):
     rate = models.IntegerField(verbose_name="Оценка")
     date = models.CharField(max_length=100, null=True, default=date.today(), blank=True)
 
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+
 
 class Specification(models.Model):
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Характеристика"
+        verbose_name_plural = "Характеристики"
 
 
 class Sale(models.Model):
@@ -118,6 +140,10 @@ class Sale(models.Model):
 
     def __str__(self) -> str:
         return f"{self.salePrice} %"
+
+    class Meta:
+        verbose_name = "Скидка"
+        verbose_name_plural = "Скидки"
 
 
 class Product(models.Model):
@@ -147,3 +173,7 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title}"
+
+    class Meta:
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
