@@ -10,6 +10,7 @@ from .serializers import ProfileSerializer, SignUpSerializer
 
 import json
 
+
 class SignInView(APIView):
     def post(self, request: HttpRequest) -> Response:
         user_data = json.loads(request.body)

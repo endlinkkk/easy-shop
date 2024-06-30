@@ -10,7 +10,6 @@ class AvatarSerializer(serializers.ModelSerializer):
         fields = ["src", "alt"]
 
 
-
 class ProfileSerializer(serializers.ModelSerializer):
     avatar = AvatarSerializer()
 
