@@ -17,6 +17,7 @@ typing_extensions = "4.7.1"
 setuptools = "^70.1.0"
 pytest = "^8.2.2"
 pytest-django = "^4.8.0"
+black = "^24.4.2"
 
 [build-system]
 requires = ["poetry-core"]

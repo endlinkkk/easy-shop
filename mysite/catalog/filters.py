@@ -3,6 +3,7 @@ from .models import Product
 from django.http import HttpRequest
 from django.db.models import Q
 
+
 def products_filter(request: HttpRequest) -> list[Product]:
     d = {"inc": "-", "dec": ""}
     name = request.GET.get("filter[name]")

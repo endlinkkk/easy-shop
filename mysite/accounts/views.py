@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from django.http import HttpRequest
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -11,11 +10,8 @@ from .serializers import ProfileSerializer, SignUpSerializer
 
 import json
 
-# Create your views here.
-
-
 class SignInView(APIView):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         user_data = json.loads(request.body)
         username = user_data.get("username")
         password = user_data.get("password")
@@ -30,7 +26,7 @@ class SignInView(APIView):
 
 
 class SignUpView(APIView):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         user_data = json.loads(request.body)
         serializer = SignUpSerializer(data=user_data)
         name = user_data.get("name")
@@ -56,7 +52,7 @@ class SignUpView(APIView):
             return Response(serializer.errors, status=400)
 
 
-def signOut(request):
+def signOut(request: HttpRequest) -> Response:
     logout(request)
     return Response(status=status.HTTP_200_OK)
 
@@ -64,12 +60,12 @@ def signOut(request):
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> Response:
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
@@ -81,7 +77,7 @@ class ProfileView(APIView):
 class PasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request):
+    def post(self, request: HttpRequest) -> Response:
         user = User.objects.get(username=request.user)
         user.set_password(request.data["newPassword"])
         user.save()
@@ -91,7 +87,7 @@ class PasswordView(APIView):
 class AvatarView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request):
+    def post(self, request: HttpRequest) -> Response:
         avatar = Avatar()
         avatar.src = request.FILES["avatar"]
         avatar.save()

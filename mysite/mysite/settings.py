@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "catalog",
     "orders",
     "payments",
+    "cart",
 ]
 
 
@@ -106,6 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+CART_SESSION_ID = "cart"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

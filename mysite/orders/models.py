@@ -1,23 +1,6 @@
 from django.db import models
-from catalog.models import Product
 from django.utils import timezone
 from django.contrib.auth.models import User
-
-
-class Basket(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-
-    def __str__(self) -> str:
-        return f"{self.user} - {self.id}"
-
-
-class BasketItem(models.Model):
-    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    quantity = models.PositiveIntegerField(default=1)
-
-    def __str__(self) -> str:
-        return f"{self.product} - {self.quantity}"
 
 
 class Order(models.Model):
@@ -38,7 +21,7 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id} - {self.createdAt} - {self.status}"
-    
+
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
